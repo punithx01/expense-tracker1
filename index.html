@@ -67,6 +67,32 @@
         .btn-pri:active{transform:scale(.97)}
         .l-err{color:var(--danger);font-size:13px;text-align:center;margin-top:8px;display:none}
 
+        /* ── PIN SCREEN ── */
+        #pinScreen{
+            min-height:100vh;
+            background:linear-gradient(150deg,#6B0000 0%,#C1380A 45%,#E8900A 100%);
+            display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;
+        }
+        .pin-logo{width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.12);border:2px solid rgba(255,215,0,.35);margin-bottom:14px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#FFD700}
+        .pin-title{font-family:'Playfair Display',serif;color:#FFD700;font-size:22px;text-align:center;margin-bottom:4px}
+        .pin-sub{color:rgba(255,255,255,0.65);font-size:13px;margin-bottom:28px;text-align:center}
+        .pin-dots{display:flex;gap:16px;justify-content:center;margin-bottom:28px}
+        .pin-dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,215,0,.6);background:transparent;transition:all .15s}
+        .pin-dot.filled{background:#FFD700;border-color:#FFD700;transform:scale(1.1)}
+        .pin-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:280px;width:100%}
+        .pin-key{
+            height:64px;border-radius:16px;background:rgba(255,255,255,.13);border:1.5px solid rgba(255,255,255,.2);
+            color:#fff;font-size:22px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;transition:all .12s;
+            -webkit-tap-highlight-color:transparent;user-select:none
+        }
+        .pin-key:active{background:rgba(255,215,0,.3);border-color:#FFD700;transform:scale(.93)}
+        .pin-key.del{font-size:17px;font-weight:600}
+        .pin-key.empty{background:transparent;border:none;cursor:default}
+        .pin-err{color:#FFB3A7;font-size:13px;font-weight:600;text-align:center;margin-top:12px;min-height:20px;transition:opacity .2s}
+        @keyframes pinShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+        .pin-dots.shake{animation:pinShake .4s ease}
+
         /* ── APP ── */
         #app{display:none;flex-direction:column;min-height:100vh}
         .hdr{
@@ -255,6 +281,31 @@
         .btn-row{display:flex;gap:8px;flex-wrap:wrap}
         .btn-row .btn-outline{flex:1;min-width:120px;margin-top:0;width:auto}
 
+        .sc.avg{border-left-color:#9B59B6}
+        .sc.avg .amt{font-size:17px}
+
+        /* Top category badge */
+        .top-cat-badge{
+            display:flex;align-items:center;gap:10px;
+            background:linear-gradient(135deg,#FDE8E8,#fff);
+            border:1.5px solid rgba(181,40,40,.18);
+            border-radius:14px;padding:12px 14px;margin-bottom:12px;
+        }
+        .top-cat-icon{width:36px;height:36px;border-radius:10px;background:var(--danger-bg);color:var(--danger);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .top-cat-info{flex:1}
+        .top-cat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+        .top-cat-name{font-size:14px;font-weight:800;color:var(--danger)}
+        .top-cat-amt{font-size:12px;font-weight:700;color:var(--text2)}
+
+        /* Cheeti & Invest section cards */
+        .ci-card{background:linear-gradient(135deg,#F0F4FF,#fff);border:1.5px solid rgba(52,152,219,.2);border-radius:14px;padding:13px 14px;margin-bottom:10px}
+        .ci-card-title{font-size:12px;font-weight:700;color:#1A4A7A;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+        .ci-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:3px 0}
+        .ci-row .ci-lbl{color:var(--muted);font-weight:500}
+        .ci-row .ci-val{font-weight:800;color:var(--text)}
+        .ci-row .ci-val.pos{color:var(--success)}
+        .ci-row .ci-val.neg{color:var(--danger)}
+
         @media(max-width:360px){.sc .amt{font-size:17px}.chip-grid{grid-template-columns:1fr}}
     </style>
 </head>
@@ -282,6 +333,34 @@
         <button type="button" class="btn-pri" onclick="doLogin()">Sign in</button>
         <p class="l-err" id="lerr">Wrong username or password</p>
     </div>
+</div>
+
+<!-- ═══ PIN ═══ -->
+<div id="pinScreen" style="display:none;flex-direction:column;align-items:center;justify-content:center">
+    <div class="pin-logo">🔐</div>
+    <div class="pin-title">Enter PIN</div>
+    <div class="pin-sub">Enter your 4-digit security PIN</div>
+    <div class="pin-dots" id="pinDots">
+        <div class="pin-dot" id="pd0"></div>
+        <div class="pin-dot" id="pd1"></div>
+        <div class="pin-dot" id="pd2"></div>
+        <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-numpad">
+        <button type="button" class="pin-key" onclick="pinKey('1')">1</button>
+        <button type="button" class="pin-key" onclick="pinKey('2')">2</button>
+        <button type="button" class="pin-key" onclick="pinKey('3')">3</button>
+        <button type="button" class="pin-key" onclick="pinKey('4')">4</button>
+        <button type="button" class="pin-key" onclick="pinKey('5')">5</button>
+        <button type="button" class="pin-key" onclick="pinKey('6')">6</button>
+        <button type="button" class="pin-key" onclick="pinKey('7')">7</button>
+        <button type="button" class="pin-key" onclick="pinKey('8')">8</button>
+        <button type="button" class="pin-key" onclick="pinKey('9')">9</button>
+        <div class="pin-key empty"></div>
+        <button type="button" class="pin-key" onclick="pinKey('0')">0</button>
+        <button type="button" class="pin-key del" onclick="pinDel()">⌫</button>
+    </div>
+    <div class="pin-err" id="pinErr"></div>
 </div>
 
 <!-- ═══ APP ═══ -->
@@ -320,7 +399,20 @@
                 <div class="amt" id="d-td">₹0</div>
                 <div class="sub" id="d-td-s">today</div>
             </div>
+            <div class="sc avg">
+                <div class="lbl">Daily avg income</div>
+                <div class="amt" id="d-avgi">₹0</div>
+                <div class="sub" id="d-avgi-s">per day</div>
+            </div>
+            <div class="sc avg" style="border-left-color:#E74C3C">
+                <div class="lbl">Daily avg expense</div>
+                <div class="amt" id="d-avge">₹0</div>
+                <div class="sub" id="d-avge-s">per day</div>
+            </div>
         </div>
+
+        <!-- Cheeti & Invest Summary -->
+        <div id="d-ci-wrap"></div>
 
         <div class="card">
             <div class="sec-title">Income by source <span id="cIS-sub" style="font-size:11px;font-weight:400;color:var(--muted)"></span></div>
@@ -354,6 +446,8 @@
                 <div class="type-toggle">
                     <button type="button" class="tt active" id="tt-pooja" onclick="setIT('pooja')">Pooja</button>
                     <button type="button" class="tt" id="tt-daily" onclick="setIT('daily')">Daily</button>
+                    <button type="button" class="tt" id="tt-cheeti" onclick="setIT('cheeti')">Cheeti</button>
+                    <button type="button" class="tt" id="tt-invest" onclick="setIT('invest')">Invest</button>
                     <button type="button" class="tt" id="tt-other" onclick="setIT('other')">Other</button>
                 </div>
             </div>
@@ -362,7 +456,7 @@
                 <div class="chip-grid" id="poojaGrid"></div>
             </div>
             <div class="fg" id="descSection" style="display:none">
-                <label>Description</label>
+                <label id="descLabel">Description</label>
                 <input type="text" id="iDesc" placeholder="e.g. Kundali reading, Vastu...">
             </div>
             <div class="fg">
@@ -382,6 +476,8 @@
             <button type="button" class="ftab active" onclick="setIF('all',this)">All</button>
             <button type="button" class="ftab" onclick="setIF('pooja',this)">Poojas</button>
             <button type="button" class="ftab" onclick="setIF('daily',this)">Daily</button>
+            <button type="button" class="ftab" onclick="setIF('cheeti',this)">Cheeti</button>
+            <button type="button" class="ftab" onclick="setIF('invest',this)">Invest</button>
             <button type="button" class="ftab" onclick="setIF('other',this)">Other</button>
         </div>
         <div class="rl" id="iList"></div>
@@ -410,6 +506,14 @@
             <button type="button" class="btn-save red" onclick="addExpense()">Save expense</button>
         </div>
         <div class="sec-title">Expense history</div>
+        <div id="topCatBadge" style="display:none" class="top-cat-badge">
+            <div class="top-cat-icon" id="topCatIcon">—</div>
+            <div class="top-cat-info">
+                <div class="top-cat-label">🔥 Top spend this month</div>
+                <div class="top-cat-name" id="topCatName">—</div>
+                <div class="top-cat-amt" id="topCatAmt"></div>
+            </div>
+        </div>
         <input type="search" class="search-inp" id="eSearch" placeholder="Search by category, note, date, or amount" autocomplete="off" aria-label="Search expenses">
         <div class="rl" id="eList"></div>
     </div>
@@ -511,18 +615,12 @@
             </p>
         </div>
 
-        <div class="ss">
-            <h3>Clear data</h3>
-            <p style="font-size:12px;color:var(--muted);margin-bottom:6px">Permanently delete all income and expense records on this device.</p>
-            <button type="button" class="btn-logout" onclick="clearAll()">Clear all data</button>
-        </div>
-
         <div style="margin-top:4px">
             <button type="button" class="btn-logout" onclick="doLogout()">Sign out</button>
         </div>
 
         <div style="text-align:center;margin-top:18px;font-size:11px;color:var(--muted)">
-            Expense Tracker v1.1
+            Expense Tracker v1.3
         </div>
     </div>
 
@@ -574,7 +672,8 @@ const POOJAS=[
 ];
 const CATS=[
     "Groceries","Electricity","Water / Gas","Medical","Education","Transport",
-    "Clothes","Pooja Items","Rent","Mobile / Net","Food / Hotel","Other"
+    "Clothes","Pooja Items","Rent","Mobile / Net","Food / Hotel",
+    "Cheeti","Investing","Other"
 ];
 
 /* ─── Default sign-in (first visit in this browser only) ───
@@ -625,9 +724,7 @@ async function doLogin(){
         const a=await getAuthAsync();
         if(u===a.u&&h(p)===a.p){
             document.getElementById('loginScreen').style.display='none';
-            document.getElementById('app').style.cssText='display:flex;flex-direction:column';
-            setupRealtimeSync();
-            initApp();
+            showPinScreen();
         }else{
             document.getElementById('lerr').textContent='Wrong username or password';
             document.getElementById('lerr').style.display='block';
@@ -642,10 +739,51 @@ async function doLogin(){
 function doLogout(){
     if(unsubscribeSync){unsubscribeSync();unsubscribeSync=null;}
     document.getElementById('app').style.display='none';
+    document.getElementById('pinScreen').style.display='none';
     document.getElementById('loginScreen').style.display='flex';
     document.getElementById('lp').value='';
     document.getElementById('lu').value='';
     setTimeout(()=>document.getElementById('lu').focus(),0);
+}
+
+// ══════════════════ PIN ══════════════════
+const CORRECT_PIN='6596';
+let pinEntry='';
+function showPinScreen(){
+    pinEntry='';
+    document.getElementById('pinErr').textContent='';
+    updatePinDots();
+    document.getElementById('pinScreen').style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(150deg,#6B0000 0%,#C1380A 45%,#E8900A 100%);padding:24px;position:fixed;inset:0;z-index:200';
+}
+function updatePinDots(){
+    for(let i=0;i<4;i++){
+        const dot=document.getElementById('pd'+i);
+        if(dot)dot.classList.toggle('filled',i<pinEntry.length);
+    }
+}
+function pinKey(k){
+    if(pinEntry.length>=4)return;
+    pinEntry+=k;
+    updatePinDots();
+    if(pinEntry.length===4)setTimeout(checkPin,120);
+}
+function pinDel(){
+    if(pinEntry.length>0){pinEntry=pinEntry.slice(0,-1);updatePinDots();}
+}
+function checkPin(){
+    if(pinEntry===CORRECT_PIN){
+        document.getElementById('pinScreen').style.display='none';
+        document.getElementById('app').style.cssText='display:flex;flex-direction:column';
+        setupRealtimeSync();
+        initApp();
+    }else{
+        const dots=document.getElementById('pinDots');
+        dots.classList.add('shake');
+        setTimeout(()=>dots.classList.remove('shake'),420);
+        document.getElementById('pinErr').textContent='Wrong PIN. Try again.';
+        pinEntry='';
+        setTimeout(updatePinDots,400);
+    }
 }
 function togglePw(id,btn){
     const i=document.getElementById(id);
@@ -776,6 +914,8 @@ function initialsAbbr(s){
 function incomeBadge(it){
     if(it.type==='pooja')return initialsAbbr(it.name);
     if(it.type==='daily')return'Di';
+    if(it.type==='cheeti')return'Ch';
+    if(it.type==='invest')return'In';
     return'Ot';
 }
 function currentMonthKey(){const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`}
@@ -863,10 +1003,19 @@ function selP(i,el){
 }
 function setIT(t){
     incType=t;
-    ['pooja','daily','other'].forEach(x=>document.getElementById('tt-'+x).classList.remove('active'));
+    ['pooja','daily','cheeti','invest','other'].forEach(x=>{
+        const el=document.getElementById('tt-'+x);
+        if(el)el.classList.remove('active');
+    });
     document.getElementById('tt-'+t).classList.add('active');
     document.getElementById('poojaSection').style.display=t==='pooja'?'block':'none';
     document.getElementById('descSection').style.display=t!=='pooja'?'block':'none';
+    const lbl=document.getElementById('descLabel');
+    const inp=document.getElementById('iDesc');
+    if(t==='cheeti'){lbl.textContent='Cheeti Group Name';inp.placeholder='e.g. Colony Group, Office Cheeti…';}
+    else if(t==='invest'){lbl.textContent='Investment Details';inp.placeholder='e.g. FD Return, Shares, Dividend…';}
+    else if(t==='daily'){lbl.textContent='Description';inp.placeholder='e.g. Daily earnings…';}
+    else{lbl.textContent='Description';inp.placeholder='e.g. Kundali reading, Vastu…';}
 }
 function addIncome(){
     const amt=parseFloat(document.getElementById('iAmt').value);
@@ -875,7 +1024,13 @@ function addIncome(){
     if(!amt||amt<=0){showToast('Enter a valid amount.');return}
     let name='';
     if(incType==='pooja'){if(!selPooja){showToast('Select a pooja type.');return}name=selPooja}
-    else{const d=document.getElementById('iDesc').value.trim();name=d||(incType==='daily'?'Daily Income':'Other Income')}
+    else{
+        const d=document.getElementById('iDesc').value.trim();
+        if(incType==='cheeti')name=d||'Cheeti';
+        else if(incType==='invest')name=d||'Investment Return';
+        else if(incType==='daily')name=d||'Daily Income';
+        else name=d||'Other Income';
+    }
     const data=getData();
     data.income.push({id:Date.now()+'',type:incType,name,amount:amt,date:dt});
     saveData(data);
@@ -964,6 +1119,21 @@ function renderEList(){
     const q=document.getElementById('eSearch').value.trim().toLowerCase();
     let items=[...data.expenses].reverse().filter(it=>expenseMatchesQuery(it,q));
     const el=document.getElementById('eList');
+
+    // Top spending category badge (current month, no search filter)
+    const mKey=currentMonthKey();
+    const monthExp=data.expenses.filter(e=>e.date.startsWith(mKey));
+    const catTotals={};
+    monthExp.forEach(e=>{catTotals[e.category]=(catTotals[e.category]||0)+e.amount});
+    const topCat=Object.entries(catTotals).sort((a,b)=>b[1]-a[1])[0];
+    const badge=document.getElementById('topCatBadge');
+    if(topCat&&monthExp.length>=2){
+        badge.style.display='flex';
+        document.getElementById('topCatIcon').textContent=initialsAbbr(topCat[0]);
+        document.getElementById('topCatName').textContent=topCat[0];
+        document.getElementById('topCatAmt').textContent=fmtR(topCat[1])+' spent this month';
+    }else{badge.style.display='none';}
+
     if(!items.length){el.innerHTML=`<div class="empty"><p>${q?'No matching expenses.':'No expenses recorded yet.'}</p></div>`;return}
     el.innerHTML=items.slice(0,80).map(it=>`<div class="ri">
         <div class="ri-l"><div class="ri-ic ei">${initialsAbbr(it.category)}</div>
@@ -1015,6 +1185,43 @@ function renderDashboard(){
     document.getElementById('d-sv-card').classList.toggle('deficit',totalI<totalE);
     document.getElementById('d-td').textContent=fmtR(totalT);
     document.getElementById('d-td-s').textContent=ti.length+' entries today';
+
+    // Daily averages (based on days elapsed in selected month)
+    const [mY,mM]=mKey.split('-').map(Number);
+    const now=new Date();
+    const isCurrentMonth=(mY===now.getFullYear()&&mM-1===now.getMonth());
+    const daysElapsed=isCurrentMonth?now.getDate():new Date(mY,mM,0).getDate();
+    const avgI=daysElapsed>0?totalI/daysElapsed:0;
+    const avgE=daysElapsed>0?totalE/daysElapsed:0;
+    document.getElementById('d-avgi').textContent=fmtR(Math.round(avgI));
+    document.getElementById('d-avgi-s').textContent='over '+daysElapsed+' days';
+    document.getElementById('d-avge').textContent=fmtR(Math.round(avgE));
+    document.getElementById('d-avge-s').textContent='over '+daysElapsed+' days';
+
+    // Cheeti & Invest summary
+    const cheetiIn=mi.filter(i=>i.type==='cheeti').reduce((s,i)=>s+i.amount,0);
+    const investIn=mi.filter(i=>i.type==='invest').reduce((s,i)=>s+i.amount,0);
+    const cheetiOut=me.filter(e=>e.category==='Cheeti').reduce((s,e)=>s+e.amount,0);
+    const investOut=me.filter(e=>e.category==='Investing').reduce((s,e)=>s+e.amount,0);
+    const ciWrap=document.getElementById('d-ci-wrap');
+    let ciHtml='';
+    if(cheetiIn||cheetiOut){
+        const net=cheetiIn-cheetiOut;
+        ciHtml+=`<div class="ci-card"><div class="ci-card-title">💰 Cheeti (${mh})</div>
+            <div class="ci-row"><span class="ci-lbl">Received</span><span class="ci-val pos">${fmtR(cheetiIn)}</span></div>
+            <div class="ci-row"><span class="ci-lbl">Paid in</span><span class="ci-val neg">-${fmtR(cheetiOut)}</span></div>
+            <div class="ci-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:6px"><span class="ci-lbl" style="font-weight:700">Net</span><span class="ci-val ${net>=0?'pos':'neg'}">${fmtR(net)}</span></div>
+        </div>`;
+    }
+    if(investIn||investOut){
+        const net=investIn-investOut;
+        ciHtml+=`<div class="ci-card" style="background:linear-gradient(135deg,#F0FFF5,#fff);border-color:rgba(26,122,62,.2)"><div class="ci-card-title" style="color:#1A4A1F">📈 Investing (${mh})</div>
+            <div class="ci-row"><span class="ci-lbl">Returns</span><span class="ci-val pos">${fmtR(investIn)}</span></div>
+            <div class="ci-row"><span class="ci-lbl">Invested</span><span class="ci-val neg">-${fmtR(investOut)}</span></div>
+            <div class="ci-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:6px"><span class="ci-lbl" style="font-weight:700">Net</span><span class="ci-val ${net>=0?'pos':'neg'}">${fmtR(net)}</span></div>
+        </div>`;
+    }
+    ciWrap.innerHTML=ciHtml;
     document.getElementById('cIS-sub').textContent='('+mh+')';
     document.getElementById('cEX-sub').textContent='('+mh+')';
     buildISChart(data.income,mKey);
